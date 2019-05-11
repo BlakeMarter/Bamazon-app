@@ -37,6 +37,8 @@ function start() {
   var query = "SELECT * FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
+    // console.log(results.length);
+
     console.log("\n========================================BAMAZON ITEMS=========================================\n");
     console.table(results);
     console.log("==============================================================================================\n");
@@ -48,22 +50,30 @@ function purchase() {
   connection.query("SELECT * FROM products", function (err, results) {
     if (err) throw err;
 
+    var resArr = [];
+    for (let i = 0; i < results.length; i++) {
+      resArr.push(results[i].id)
+
+    }
     inquirer.prompt([
       {
         name: "productID",
         type: "input",
-        message: "What is the ID of the product you'd like to buy?\n",
+        message: "What is the ID of the product you'd like to buy?",
         validate: function (value) {
-          if (isNaN(value) === false) {
+
+          if (isNaN(value) === false && (value > results.length) === false)  {
             return true;
+
           }
           return false;
+
         }
       },
       {
         name: "productAmt",
         type: "input",
-        message: "How many of this product would you like to purchase?\n",
+        message: "How many of this product would you like to purchase?",
         validate: function (value) {
           if (isNaN(value) === false) {
             return true;
@@ -76,26 +86,30 @@ function purchase() {
         var ansID = answer.productID;
         var ansAmt = answer.productAmt;
         var remainingInv = Math.floor(results[Math.floor(ansID - 1)].stock_quantity - ansAmt);
-        console.log("ansID: " + ansID);
-        console.log("ansAmt: " + ansAmt);
-        console.log("results[ansID].stock_quantity: " + results[Math.floor(ansID - 1)].stock_quantity);
-        console.log("RemainingInv: " + remainingInv);
+        // console.log("ansID: " + ansID);
+        // console.log("ansAmt: " + ansAmt);
+        // console.log("results[ansID].stock_quantity: " + results[Math.floor(ansID - 1)].stock_quantity);
+        // console.log("RemainingInv: " + remainingInv);
 
         var query = "SELECT id, product_name, price, stock_quantity FROM products WHERE ?";
         connection.query(query, { id: ansID }, function (err, res) {
-          if (err) throw err;
-          console.log("\n======================================================\n");
-          console.table(res);
-          console.log("\n======================================================\n");
 
+
+          if (err) throw err;
+          console.log("\n======================================================");
+          console.table(res);
+          console.log("======================================================\n");
+          
           if (parseInt(ansAmt) > res[0].stock_quantity) {
             console.log("Insufficient Quantity! Please select a smaller amount.");
-           purchase();
+            purchase();
 
           } else {
-            console.log("Here you go! \n" + ansAmt + " " + res[0].product_name + 
-            " has been added to your cart.\n" + 
-            "Your total is $" + res[0].price * ansAmt);
+            console.log("\n**************************************************\n" +
+              "\nHere you go! \n" + "\n" + ansAmt + " " + res[0].product_name +
+              " has been added to your cart.\n" +
+              "\nYour total is $" + res[0].price * ansAmt + ". Now pay up!\n" +
+              "\n**************************************************\n");
             var query = connection.query(
               "UPDATE products SET ? WHERE ?",
               [
@@ -108,15 +122,16 @@ function purchase() {
               ],
               function (err, res) {
                 if (err) throw err;
-                console.log(res.affectedRows + " products updated!\n");
+                // console.log(res.affectedRows + " products updated!\n");
                 // Call deleteProduct AFTER the UPDATE completes
 
               }
             )
-            console.log("query.sql" + query.sql);
-            
+            // console.log("query.sql" + query.sql);
+
           }
           // showTable();
+          connection.end();
         })
       })
   });
