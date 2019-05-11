@@ -21,9 +21,20 @@ connection.connect(function (err) {
   start();
 });
 
+// This executes a query to mySQL and results in a table of entire DB.
+function showTable() {
+  var query = "SELECT * FROM products";
+  connection.query(query, function (err, results) {
+    if (err) throw err;
+    console.log("\n========================================BAMAZON ITEMS=========================================\n");
+    console.table(results);
+    console.log("==============================================================================================\n");
+  });
+}
+
 function start() {
   // This executes a query to mySQL and results in a table of entire DB.
-  var query = "SELECT id, product_name, department_name, price, stock_quantity FROM products";
+  var query = "SELECT * FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
     console.log("\n========================================BAMAZON ITEMS=========================================\n");
@@ -34,61 +45,79 @@ function start() {
 };
 
 function purchase() {
-  connection.query("SELECT * FROM auctions", function(err, results) {
+  connection.query("SELECT * FROM products", function (err, results) {
     if (err) throw err;
-    
-  inquirer.prompt([
-    {
-      name: "productID",
-      type: "input",
-      message: "What is the ID of the product you'd like to buy?",
-      validate: function (value) {
-        if (isNaN(value) === false) {
-          return true;
+
+    inquirer.prompt([
+      {
+        name: "productID",
+        type: "input",
+        message: "What is the ID of the product you'd like to buy?\n",
+        validate: function (value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
         }
-        return false;
+      },
+      {
+        name: "productAmt",
+        type: "input",
+        message: "How many of this product would you like to purchase?\n",
+        validate: function (value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
       }
-    },
-    {
-      name: "productAmt",
-      type: "input",
-      message: "How many of this product would you like to purchase?",
-      validate: function (value) {
-        if (isNaN(value) === false) {
-          return true;
-        }
-        return false;
-      }
-    }
-  ])
-    .then(function (answer) {
-      var ansID = answer.productID;
-      var ansAmt = answer.productAmt;
-      console.log(ansID + ansAmt);
+    ])
+      .then(function (answer) {
+        var ansID = answer.productID;
+        var ansAmt = answer.productAmt;
+        var remainingInv = Math.floor(results[Math.floor(ansID - 1)].stock_quantity - ansAmt);
+        console.log("ansID: " + ansID);
+        console.log("ansAmt: " + ansAmt);
+        console.log("results[ansID].stock_quantity: " + results[Math.floor(ansID - 1)].stock_quantity);
+        console.log("RemainingInv: " + remainingInv);
 
-      var query = "SELECT id, product_name, stock_quantity FROM products WHERE ?";
-      connection.query(query, { id: ansID }, function (err, res) {
-        if (err) throw err;
-        console.log("\n======================================================\n");
-        console.table(res);
-        console.log("\n======================================================\n");
+        var query = "SELECT id, product_name, price, stock_quantity FROM products WHERE ?";
+        connection.query(query, { id: ansID }, function (err, res) {
+          if (err) throw err;
+          console.log("\n======================================================\n");
+          console.table(res);
+          console.log("\n======================================================\n");
 
-        if (parseInt(ansAmt) > res[0].stock_quantity) {
-          console.log("Insufficient Quantity! Please select a smaller amount.");
+          if (parseInt(ansAmt) > res[0].stock_quantity) {
+            console.log("Insufficient Quantity! Please select a smaller amount.");
+           purchase();
 
-        } else {
-          console.log("Here you go! \n" + ansAmt + " " + res[0].product_name +
-            " has been added to your cart.");
-          var query = "UPDATE products SET ? WHERE ?";
-          // var newAmnt = res[0].stock_quantity - ansAmt;
-          // connection.query(query, { stock_quantity: newAmnt }, ansID, function (err, results) {
-          connection.query(query, [{ stock_quantity = stock_quantity - ansAmt }, { id: ansID }], function (err) {
-            if (err) throw err;
-            console.log(results);
-          });
-        }
+          } else {
+            console.log("Here you go! \n" + ansAmt + " " + res[0].product_name + 
+            " has been added to your cart.\n" + 
+            "Your total is $" + res[0].price * ansAmt);
+            var query = connection.query(
+              "UPDATE products SET ? WHERE ?",
+              [
+                {
+                  stock_quantity: remainingInv
+                },
+                {
+                  id: ansID
+                }
+              ],
+              function (err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " products updated!\n");
+                // Call deleteProduct AFTER the UPDATE completes
 
+              }
+            )
+            console.log("query.sql" + query.sql);
+            
+          }
+          // showTable();
+        })
       })
-    })
   });
 }
