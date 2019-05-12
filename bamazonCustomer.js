@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
+var colors = require("colors")
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -21,16 +22,17 @@ connection.connect(function (err) {
   start();
 });
 
-// This executes a query to mySQL and results in a table of entire DB.
-function showTable() {
+// This executes at the end of the connection and shows an updated database.
+function showUpdateTable() {
   var query = "SELECT * FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
-    console.log("\n========================================BAMAZON ITEMS=========================================\n");
+    console.log("\n====================================BAMAZON ITEMS (UPDATED)===================================\n".magenta);
     console.table(results);
-    console.log("==============================================================================================\n");
+    console.log("=============================================================================================\n".magenta);
   });
-}
+};
+
 
 function start() {
   // This executes a query to mySQL and results in a table of entire DB.
@@ -39,9 +41,9 @@ function start() {
     if (err) throw err;
     // console.log(results.length);
 
-    console.log("\n========================================BAMAZON ITEMS=========================================\n");
+    console.log("\n========================================BAMAZON ITEMS========================================\n".blue);
     console.table(results);
-    console.log("==============================================================================================\n");
+    console.log("=============================================================================================\n".blue);
     purchase();
   });
 };
@@ -62,7 +64,7 @@ function purchase() {
         message: "What is the ID of the product you'd like to buy?",
         validate: function (value) {
 
-          if (isNaN(value) === false && (value > results.length) === false)  {
+          if (isNaN(value) === false && (value > results.length) === false) {
             return true;
 
           }
@@ -96,20 +98,24 @@ function purchase() {
 
 
           if (err) throw err;
-          console.log("\n======================================================");
-          console.table(res);
-          console.log("======================================================\n");
+          // console.log("\n=============================================================\n");
+          // console.table(res);
+          // console.log("=============================================================\n");
           
+          // console.log("=============================================================================================\n");
+          // console.log("---------------------------------------------------------------------------------------------\n");
+
           if (parseInt(ansAmt) > res[0].stock_quantity) {
             console.log("Insufficient Quantity! Please select a smaller amount.");
             purchase();
 
           } else {
-            console.log("\n**************************************************\n" +
+            console.log("\n----------------------------------------Your Cart---------------------------------------------\n".green +
               "\nHere you go! \n" + "\n" + ansAmt + " " + res[0].product_name +
               " has been added to your cart.\n" +
-              "\nYour total is $" + res[0].price * ansAmt + ". Now pay up!\n" +
-              "\n**************************************************\n");
+              "\nYour total is $" + Math.round((res[0].price * ansAmt) * 100) / 100 + ".\n" + 
+              "\nNow pay up!\n" +
+              "\n---------------------------------------------------------------------------------------------\n".green);
             var query = connection.query(
               "UPDATE products SET ? WHERE ?",
               [
@@ -130,8 +136,21 @@ function purchase() {
             // console.log("query.sql" + query.sql);
 
           }
-          // showTable();
-          connection.end();
+          inquirer.prompt([
+            {
+              name: "again",
+              type: "confirm",
+              message: "Would you like to make another purchase?"
+            }
+          ]).then(answers => {
+            showUpdateTable();
+            if (answers.again === true) {
+              purchase();
+            } else {
+              connection.end();
+            }
+          })
+          // connection.end();
         })
       })
   });

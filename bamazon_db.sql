@@ -24,13 +24,13 @@ insert into products (product_name, department_name, price, stock_quantity)
 values ("Monopoly: Game of Thrones Edition", "Toys and Games", 23.49, 50);
 
 insert into products (product_name, department_name, price, stock_quantity)
-values ("Cards Against Humanity", "Toys and Games", 25.00, 50);
+values ("Cards Against Humanity", "Toys and Games", 25.99, 50);
 
 insert into products (product_name, department_name, price, stock_quantity)
-values ("Mens Under Armour T-shirt", "Clothing", 18.75, 50);
+values ("Mens Under Armour T-shirt", "Clothing", 18.99, 50);
 
 insert into products (product_name, department_name, price, stock_quantity)
-values ("Womens Under Armour T-shirt", "Clothing", 19.45, 50);
+values ("Womens Under Armour T-shirt", "Clothing", 19.99, 50);
 
 insert into products (product_name, department_name, price, stock_quantity)
 values ("Lord of the Rings Triligy (hardcover) book set ", "Books", 37.58, 50);
