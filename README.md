@@ -1,185 +1,190 @@
-# Bamazon-app
+# __Welcome to Bamazon!__
 
-# Node.js & MySQL
-
-## Overview
-
-In this activity, you'll be creating an Amazon-like storefront with the MySQL skills you learned this unit. The app will take in orders from customers and deplete stock from the store's inventory. As a bonus task, you can program your app to track product sales across your store's departments and then provide a summary of the highest-grossing departments in the store.
-
-Make sure you save and require the MySQL and Inquirer npm packages in your homework files--your app will need them for data input and storage.
-
-## Submission Guide
-
-Make sure you use the normal GitHub. Because this is a CLI App, there will be no need to deploy it to Heroku. This time, though, you need to include screenshots, a gif, and/or a video showing us that you got the app working with no bugs. You can include these screenshots or a link to a video in a `README.md` file.
-
-* Include screenshots (or a video) of typical user flows through your application (for the customer and if relevant the manager/supervisor). This includes views of the prompts and the responses after their selection (for the different selection options).
-
-* Include any other screenshots you deem necessary to help someone who has never been introduced to your application understand the purpose and function of it. This is how you will communicate to potential employers/other developers in the future what you built and why, and to show how it works. 
-
-* Because screenshots (and well-written READMEs) are extremely important in the context of GitHub, this will be part of the grading.
-
-If you haven't written a markdown file yet, [click here for a rundown](https://guides.github.com/features/mastering-markdown/), or just take a look at the raw file of these instructions.
-
-### Commits
-
-Having an active and healthy commit history on GitHub is important for your future job search. It is also extremely important for making sure your work is saved in your repository. If something breaks, committing often ensures you are able to go back to a working version of your code.
-
-* Committing often is a signal to employers that you are actively working on your code and learning.
-
-  * We use the mantra “commit early and often.”  This means that when you write code that works, add it and commit it!
-
-  * Numerous commits allow you to see how your app is progressing and give you a point to revert to if anything goes wrong.
-
-* Be clear and descriptive in your commit messaging.
-
-  * When writing a commit message, avoid vague messages like "fixed." Be descriptive so that you and anyone else looking at your repository knows what happened with each commit.
-
-* We would like you to have well over 200 commits by graduation, so commit early and often!
-
-### Submission on BCS
-
-* Please submit the link to the Github Repository!
-
-## Instructions
-
-### Challenge #1: Customer View (Minimum Requirement)
-
-1. Create a MySQL Database called `bamazon`.
-
-2. Then create a Table inside of that database called `products`.
-
-3. The products table should have each of the following columns:
-
-   * item_id (unique id for each product)
-
-   * product_name (Name of product)
-
-   * department_name
-
-   * price (cost to customer)
-
-   * stock_quantity (how much of the product is available in stores)
-
-4. Populate this database with around 10 different products. (i.e. Insert "mock" data rows into this database and table).
-
-5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale.
-
-6. The app should then prompt users with two messages.
-
-   * The first should ask them the ID of the product they would like to buy.
-   * The second message should ask how many units of the product they would like to buy.
-
-7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-
-   * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-   * This means updating the SQL database to reflect the remaining quantity.
-   * Once the update goes through, show the customer the total cost of their purchase.
-
+## __Table of Contents__
+* Overview
+* Technologies
+* Local Installation
+* Demo
 - - -
+## __Overview__
+  What is Bamazon? Bamazon is an amazing place where you can come and buy anything your heart desires (relatively speaking)! This Bamazon app is a command line node app that takes lets you interact with and manipulate data on a MySQL database.
+  
+  Cammands allowed by The Bamazon App:
 
-* If this activity took you between 8-10 hours, then you've put enough time into this assignment. Feel free to stop here -- unless you want to take on the next challenge.
-
-- - -
-
-### Challenge #2: Manager View (Next Level)
-
-* Create a new Node application called `bamazonManager.js`. Running this application will:
-
-  * List a set of menu options:
-
-    * View Products for Sale
+  - `node bamazonCustomer.js`
     
-    * View Low Inventory
+    This will show you our entire list of items for purchase, here at Bamazon. You will then be prompted with 2 questions:
+     * First question: `What is the ID of the product you'd like to buy?`
+     * Second question: `How many of this product would you like to purchase?`
+     
+    Answering these two questions grabs the item you would like to buy, how many of that item you'd like to buy, and gives you a total amount you owe for those items. After this, it will prompt you with a confirm:
+     * `Would you like to make another purchase?`
+
+        If you select `y` or `yes`, it will reprompt you with the first and second questions.
+
+        If you select `n` or `no`, it will thank you for your patronage and end the Bamazon app. 
+
+  - `node bamazonManager.js`
+
+     This will first prompt you (the manager) with a question (`What would you like to do, Mr. Manager?`) which has a list of actions that you may choose from:
+     * `View Products for Sale`
+       
+       This shows you an organized table of all items we have at Bamazon.
+
+     * `View Low Inventory`
+
+       This shows you all items in our inventory that has 5 items or less in it's stock_quantity. If there are no low inventory items, the table will be blank.
+
+     * `Add to Inventory`
+
+       This will first show you an organized table of all items in the Bamazon inventory, then it will prompt you with 2 questions:
+        
+        - `What is the ID of the product you'd like to add to?`
+        - `How many of this product would you like to add?`
+
+        Answering these 2 questions will add whatever amount of items you'd like to whichever item you chose, and give you an updated table of all items in the inventory, including your additions. After this, it will prompt you with a confirm:
+
+         * `Would you like to make another purchase?`
+
+            If you select `y` or `yes`, it will reprompt you with the questions again.
+
+            If you select `n` or `no`, it will give you an updated table of the changes made to the inventory and prompt you with the beginning list of questions.
+
+     * `Add New Product`
+
+        This will first prompt you with 4 questions:
+        
+        - `What is the name of the product you'd like to add? (Required):`
+        - `What is the department that this item is listed under? (Required):`
+        - `What is the price of this item? (Required):`
+        - `How many of this item would you like add? (Required):`
+
+        Answering these 4 questions will add whatever item you'd like to the inventory table, and give you an updated table of all items in the inventory, including your additions. After this, it will prompt you with a confirm:
+
+         * `Would you like to make another purchase?`
+
+            If you select `y` or `yes`, it will reprompt you with the questions again.
+
+            If you select `n` or `no`, it will give you an updated table of the changes made to the inventory and prompt you with the beginning list of questions.
+
+
+     * `Leave`
+
+       This will end the Bamazon app. :(
+- - -
+
+## __Technologies__
+* JavaScript
+* MySQL
+  * #### __MySQL Database requirements__
+    These are provided within the `bamazon_db.sql` file, or you could import the `items.csv` file into your MySQL workbench.
+    ```
+    drop database if exists bamazon_db;
+    create database bamazon_db;
+
+    use bamazon_db;
+
+    create table products (
+      id int not null auto_increment,
+      product_name varchar(100) not null,
+      department_name varchar(30) null,
+      price decimal(10,2) not null,
+      stock_quantity int(11) not null,
+      primary key (id)
+    );
+
+    use bamazon_db;
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Echo Dot Smart Speaker", "Electronics", 29.99, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Amazon Fire TV Stick", "Electronics", 49.99, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Monopoly: Game of Thrones Edition", "Toys and Games", 23.49, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Cards Against Humanity", "Toys and Games", 25.99, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Mens Under Armour T-shirt", "Clothing", 18.99, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Womens Under Armour T-shirt", "Clothing", 19.99, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Lord of the Rings Triligy (hardcover) book set ", "Books", 37.58, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Lord of the Rings Triligy (Soft Cover) book set ", "Books", 28.58, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Game of Thrones (A Song of Ice and Fire) book set", "Books", 29.97, 50);
+
+    insert into products (product_name, department_name, price, stock_quantity)
+    values ("Microfiber Cleaning Cloth (24-pack)", "Automotive", 11.27, 50);
+
+    select * from products;
+    ```
     
-    * Add to Inventory
-    
-    * Add New Product
+* Node.js
+  * #### __NPM Requirements__
+    - mysql
+    - inquirer
+    - console.table
+    - colors
+     ```
+     var mysql = require("mysql");
+     var inquirer = require("inquirer");
+     var cTable = require("console.table");
+     var colors = require("colors");
+     ```
+- - - 
+## __Local Installation__
+* #### __Step 1: Git Clone__
+    Because this is a CLI, it does not have a URL and cannot be viewed in the browser. You will need to clone the Bamazon app to your local computer by opening your terminal, navigating to the folder you want to store it in and input:
+    ```
+    git clone https://github.com/BlakeMarter/Bamazon-app.git
+    ```
+    The Bamazon app and its files should now be in your project folder.
 
-  * If a manager selects `View Products for Sale`, the app should list every available item: the item IDs, names, prices, and quantities.
 
-  * If a manager selects `View Low Inventory`, then it should list all items with an inventory count lower than five.
-
-  * If a manager selects `Add to Inventory`, your app should display a prompt that will let the manager "add more" of any item currently in the store.
-
-  * If a manager selects `Add New Product`, it should allow the manager to add a completely new product to the store.
-
+ * #### __Step 2: Install Reaquired NPM's__
+  
+   Navigate to the correct JS file in your terminal and (because this app includes a `package.json`)     input `npm install` or `npm i`.
 - - -
+## __Demo__
 
-* If you finished Challenge #2 and put in all the hours you were willing to spend on this activity, then rest easy! Otherwise continue to the next and final challenge.
+Once you have everything installed, typing the following commands will give you suprising results!
+ ### __Bamazon Customer__
 
-- - -
+  Example input `node bamazonCustomer.js`
 
-### Challenge #3: Supervisor View (Final Level)
+  ![GIF bamazonCustomer.js](images/bamCus.gif)
 
-1. Create a new MySQL table called `departments`. Your table should include the following columns:
 
-   * department_id
+ ### __Bamazon Manager__
 
-   * department_name
+  Example input `node bamazonManager.js`
 
-   * over_head_costs (A dummy number you set for each department)
+  - Example question `View Products for Sale`
 
-2. Modify the products table so that there's a product_sales column, and modify your `bamazonCustomer.js` app so that when a customer purchases anything from the store, the price of the product multiplied by the quantity purchased is added to the product's product_sales column.
+    ![GIF of selection "View Products for Sale"](images/manaViewProd.gif)
 
-   * Make sure your app still updates the inventory listed in the `products` column.
+  - Example input `View Low Inventory` (with low inventory items)
 
-3. Create another Node app called `bamazonSupervisor.js`. Running this application will list a set of menu options:
+    ![GIF of selection "View Low Inventory"](images/manaLowInv.gif)
 
-   * View Product Sales by Department
-   
-   * Create New Department
+  - Example input `View Low Inventory` (without any low inventory items)  
 
-4. When a supervisor selects `View Product Sales by Department`, the app should display a summarized table in their terminal/bash window. Use the table below as a guide.
+    ![GIF of selection "View Low Inventory" (without any low inventory items)](images/manaNoLowInv.gif)
 
-| department_id | department_name | over_head_costs | product_sales | total_profit |
-| ------------- | --------------- | --------------- | ------------- | ------------ |
-| 01            | Electronics     | 10000           | 20000         | 10000        |
-| 02            | Clothing        | 60000           | 100000        | 40000        |
+  - Example input `Add to Inventory`
 
-5. The `total_profit` column should be calculated on the fly using the difference between `over_head_costs` and `product_sales`. `total_profit` should not be stored in any database. You should use a custom alias.
+    ![GIF of selection "Add to Inventory"](images/manaAddInv.gif)
 
-6. If you can't get the table to display properly after a few hours, then feel free to go back and just add `total_profit` to the `departments` table.
+  - Example input `Add New Product`  
 
-   * Hint: You may need to look into aliases in MySQL.
+    ![GIF of selection "Add New Product"](images/manaAddNewProd.gif)
 
-   * Hint: You may need to look into GROUP BYs.
-
-   * Hint: You may need to look into JOINS.
-
-   * **HINT**: There may be an NPM package that can log the table to the console. What's is it? Good question :)
-
-### Reminder: Submission on BCS
-
-* Please submit the link to the Github Repository!
-
-- - -
-
-### Minimum Requirements
-
-Attempt to complete homework assignment as described in instructions. If unable to complete certain portions, please pseudocode these portions to describe what remains to be completed. Adding a README.md as well as adding this homework to your portfolio are required as well and more information can be found below.
-
-- - -
-
-### Create a README.md
-
-Add a `README.md` to your repository describing the project. Here are some resources for creating your `README.md`. Here are some resources to help you along the way:
-
-* [About READMEs](https://help.github.com/articles/about-readmes/)
-
-* [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-
-- - -
-
-### Add To Your Portfolio
-
-After completing the homework please add the piece to your portfolio. Make sure to add a link to your updated portfolio in the comments section of your homework so the TAs can easily ensure you completed this step when they are grading the assignment. To receive an 'A' on any assignment, you must link to it from your portfolio.
-
-- - -
-
-### One More Thing
-
-If you have any questions about this project or the material we have covered, please post them in the community channels in slack so that your fellow developers can help you! If you're still having trouble, you can come to office hours for assistance from your instructor and TAs.
-
-**Good Luck!**

@@ -140,10 +140,13 @@ function purchase() {
               message: "Would you like to make another purchase?"
             }
           ]).then(answers => {
-            showUpdateTable();
             if (answers.again === true) {
+              showUpdateTable();
               purchase();
             } else {
+              showUpdateTable();
+              console.log("\nThank you for using Bamazon! Please tell your friends and come back anytime!");
+              
               connection.end();
             }
           })
