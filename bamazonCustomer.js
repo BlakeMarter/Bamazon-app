@@ -63,13 +63,10 @@ function purchase() {
         type: "input",
         message: "What is the ID of the product you'd like to buy?",
         validate: function (value) {
-
           if (isNaN(value) === false && (value > results.length) === false) {
             return true;
-
           }
           return false;
-
         }
       },
       {
