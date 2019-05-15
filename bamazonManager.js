@@ -229,11 +229,6 @@ function newProduct() {
       // var productName = answer.prodName.join(" ");
       // var departName = answer.depName.join(" ");
       // var itemPrice = parseFloat(answer.prodPrice);
-
-      console.log("\n=================================BAMAZON ITEMS====================================\n".blue);
-      console.table(results);
-      console.log("===================================================================================\n".blue);
-      
       var query = connection.query(
         "INSERT INTO products SET ?",
         {
@@ -248,6 +243,9 @@ function newProduct() {
         );
       
           // Call updateProduct AFTER the INSERT completes
+          console.log("\n=================================BAMAZON ITEMS====================================\n".blue);
+          console.table(results);
+          console.log("===================================================================================\n".blue);
 
           inquirer.prompt([
             {
