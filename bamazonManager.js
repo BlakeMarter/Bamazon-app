@@ -81,9 +81,9 @@ function lowInventory() {
     console.log("results " + results);
 
     if (typeof results[0] === 'undefined') {
-      console.log("\n=================================Low Inventory====================================\n".red);
+      console.log("\n============================No Low Inventory Items================================\n".green);
       console.log("There is no items with low stock quantity");
-      console.log("\n==================================================================================\n".red);
+      console.log("\n==================================================================================\n".green);
     } else {
 
       console.log("\n=================================Low Inventory====================================\n".red);
