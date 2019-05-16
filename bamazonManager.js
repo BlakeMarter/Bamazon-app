@@ -1,3 +1,4 @@
+// ===========================================================================================================
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
@@ -10,8 +11,8 @@ var connection = mysql.createConnection({
 
   user: "root",
 
-  
-  password: "Magicalpotato684", //<====== Add your password to mySQL here
+
+  password: "examplePassword", //<====== Add your password to mySQL here
   database: "bamazon_db"
 });
 
@@ -19,18 +20,18 @@ connection.connect(function (err) {
   if (err) throw err;
   start();
 });
-// ==============================================================================================================
+// ===========================================================================================================
+
 function start() {
 
   inquirer.prompt([
     {
       name: "manager",
       type: "list",
-      message: "What would you like to do, Mr. Manager?",
+      message: "\nWhat would you like to do, Mr. Manager?",
       choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Leave"]
     },
   ]).then(function (answer) {
-    console.log(answer.manager);
 
     switch (answer.manager) {
       case "View Products for Sale":
@@ -57,7 +58,8 @@ function start() {
   });
 
 };
-// ==============================================================================================================
+// ===========================================================================================================
+
 function showTable() {
 
   var query = "SELECT id, product_name, price, stock_quantity FROM products";
@@ -69,33 +71,30 @@ function showTable() {
     start();
   });
 };
+// ===========================================================================================================
 
-// ==============================================================================================================
 function lowInventory() {
 
-  var lowProductsArr = [];
-
-  var query = "SELECT id, product_name, stock_quantity FROM products";
+  var query = "SELECT * FROM products WHERE stock_quantity <= 5";
   connection.query(query, function (err, results) {
     if (err) throw err;
-    
-    for (i = 0; i < results.length; i++) {
-      if (results[0] === null) {
-        console.log("There are no items with low stock quantities.");
+    console.log("results " + results);
 
-      } else if (results[i].stock_quantity <= 5) {
-        lowProductsArr.push(results[i]);
-      }
-    };
-    console.log("\n=================================Low Inventory====================================\n".red);
-    console.table(lowProductsArr);
-    console.log("\n==================================================================================\n".red);
+    if (typeof results[0] === 'undefined') {
+      console.log("\n=================================Low Inventory====================================\n".red);
+      console.log("There is no items with low stock quantity");
+      console.log("\n==================================================================================\n".red);
+    } else {
 
+      console.log("\n=================================Low Inventory====================================\n".red);
+      console.table(results);
+      console.log("\n==================================================================================\n".red);
+    }
     start();
   });
 };
+// ===========================================================================================================
 
-// ==============================================================================================================
 function addInventory() {
 
   var query = "SELECT id, product_name, price, stock_quantity FROM products";
@@ -146,11 +145,9 @@ function addInventory() {
           ],
           function (err, res) {
             if (err) throw err;
-            console.log("\n" + res.affectedRows + " products updated!");
-            
-            console.log("\n=================================BAMAZON ITEMS====================================\n".blue);
-            console.table(results);
-            console.log("===================================================================================\n".blue);
+            console.log("\n" + res.affectedRows + " product has been updated!" +
+              "\nYou have added " + ansAmt + " units to " + results[ansID].product_name + "\n");
+
             inquirer.prompt([
               {
                 name: "again",
@@ -168,80 +165,72 @@ function addInventory() {
       })
   });
 };
+// ===========================================================================================================
 
-// ==============================================================================================================
 function newProduct() {
 
-  var query = "SELECT * FROM products";
-  connection.query(query, function (err, results) {
-
-    inquirer.prompt([
-      {
-        name: "prodName",
-        type: "input",
-        message: "What is the name of the product you'd like to add? (Required):",
-      },
-      {
-        name: "depName",
-        type: "input",
-        message: "What is the department that this item is listed under? (Required):",
-      },
-      {
-        name: "prodPrice",
-        type: "input",
-        message: "What is the price of this item? (Required):",
-        validate: function (value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
+  inquirer.prompt([
+    {
+      name: "prodName",
+      type: "input",
+      message: "\nWhat is the name of the product you'd like to add? (Required):",
+    },
+    {
+      name: "depName",
+      type: "input",
+      message: "What is the department that this item is listed under? (Required):",
+    },
+    {
+      name: "prodPrice",
+      type: "input",
+      message: "What is the price of this item? (Required):",
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
         }
-      },
-      {
-        name: "prodStock",
-        type: "input",
-        message: "How many of this item would you like add? (Required):",
-        validate: function (value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        return false;
       }
-    ]).then(function (answer) {
-      var query = connection.query(
-        "INSERT INTO products SET ?",
-        {
-          product_name: answer.prodName,
-          department_name: answer.depName,
-          price: parseFloat(answer.prodPrice),
-          stock_quantity: parseInt(answer.prodStock)
-        },
-        function (err, res) {
-          if (err) throw err;
+    },
+    {
+      name: "prodStock",
+      type: "input",
+      message: "How many of this item would you like add? (Required):",
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
         }
-      );
+        return false;
+      }
+    }
+  ]).then(function (answer) {
+    var query = connection.query(
+      "INSERT INTO products SET ?",
+      {
+        product_name: answer.prodName,
+        department_name: answer.depName,
+        price: parseFloat(answer.prodPrice),
+        stock_quantity: parseInt(answer.prodStock)
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log("\n" + res.affectedRows + " product(s) has been added!" +
+          "\nYou have added " + answer.prodName + " to the inventory.\n");
 
-      // Call updateProduct AFTER the INSERT completes
-      console.log("\n=================================BAMAZON ITEMS====================================\n".blue);
-      console.table(results);
-      console.log("===================================================================================\n".blue);
-
-      inquirer.prompt([
-        {
-          name: "again",
-          type: "confirm",
-          message: "Would you like to make another purchase?"
-        }
-      ]).then(answers => {
-        if (answers.again === true) {
-          newProduct();
-        } else {
-          start();
-        }
-      })
-
-
-    })
+        inquirer.prompt([
+          {
+            name: "again",
+            type: "confirm",
+            message: "Would you like to make another purchase?"
+          }
+        ]).then(answers => {
+          if (answers.again === true) {
+            newProduct();
+          } else {
+            start();
+          }
+        })
+      }
+    );
   })
 }
+// ===========================================================================================================

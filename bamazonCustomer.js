@@ -1,3 +1,4 @@
+// ===========================================================================================================
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
@@ -21,26 +22,13 @@ connection.connect(function (err) {
   if (err) throw err;
   start();
 });
-
-// This executes at the end of the connection and shows an updated database.
-function showUpdateTable() {
-  var query = "SELECT * FROM products";
-  connection.query(query, function (err, results) {
-    if (err) throw err;
-    console.log("\n====================================BAMAZON ITEMS (UPDATED)===================================\n".magenta);
-    console.table(results);
-    console.log("=============================================================================================\n".magenta);
-  });
-};
-
+// ===========================================================================================================
 
 function start() {
   // This executes a query to mySQL and results in a table of entire DB.
   var query = "SELECT * FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
-    // console.log(results.length);
-
     console.log("\n========================================BAMAZON ITEMS========================================\n".blue);
     console.table(results);
     console.log("=============================================================================================\n".blue);
@@ -85,22 +73,10 @@ function purchase() {
         var ansID = answer.productID;
         var ansAmt = answer.productAmt;
         var remainingInv = Math.floor(results[Math.floor(ansID - 1)].stock_quantity - ansAmt);
-        // console.log("ansID: " + ansID);
-        // console.log("ansAmt: " + ansAmt);
-        // console.log("results[ansID].stock_quantity: " + results[Math.floor(ansID - 1)].stock_quantity);
-        // console.log("RemainingInv: " + remainingInv);
 
         var query = "SELECT id, product_name, price, stock_quantity FROM products WHERE ?";
         connection.query(query, { id: ansID }, function (err, res) {
-
-
           if (err) throw err;
-          // console.log("\n=============================================================\n");
-          // console.table(res);
-          // console.log("=============================================================\n");
-          
-          // console.log("=============================================================================================\n");
-          // console.log("---------------------------------------------------------------------------------------------\n");
 
           if (parseInt(ansAmt) > res[0].stock_quantity) {
             console.log("Insufficient Quantity! Please select a smaller amount.");
@@ -110,7 +86,7 @@ function purchase() {
             console.log("\n----------------------------------------Your Cart---------------------------------------------\n".green +
               "\nHere you go! \n" + "\n" + ansAmt + " " + res[0].product_name +
               " has been added to your cart.\n" +
-              "\nYour total is $" + Math.round((res[0].price * ansAmt) * 100) / 100 + ".\n" + 
+              "\nYour total is $" + Math.round((res[0].price * ansAmt) * 100) / 100 + ".\n" +
               "\nNow pay up!\n" +
               "\n---------------------------------------------------------------------------------------------\n".green);
             var query = connection.query(
@@ -125,13 +101,8 @@ function purchase() {
               ],
               function (err, res) {
                 if (err) throw err;
-                // console.log(res.affectedRows + " products updated!\n");
-                // Call deleteProduct AFTER the UPDATE completes
-
               }
             )
-            // console.log("query.sql" + query.sql);
-
           }
           inquirer.prompt([
             {
@@ -141,12 +112,16 @@ function purchase() {
             }
           ]).then(answers => {
             if (answers.again === true) {
-              showUpdateTable();
+              var query = "SELECT * FROM products";
+              connection.query(query, function (err, results) {
+                if (err) throw err;
+                console.log("\n====================================BAMAZON ITEMS (UPDATED)===================================\n".magenta);
+                console.table(results);
+                console.log("=============================================================================================\n".magenta);
+              });
               purchase();
             } else {
-              showUpdateTable();
-              console.log("\nThank you for using Bamazon! Please tell your friends and come back anytime!");
-              
+              console.log("\nThank you for using Bamazon! Please tell your friends and come back anytime!\n");
               connection.end();
             }
           })
@@ -155,3 +130,4 @@ function purchase() {
       })
   });
 }
+// ===========================================================================================================

@@ -159,9 +159,9 @@
 Once you have everything installed, typing the following commands will give you suprising results!
  ### __Bamazon Customer__
 
-  Example input `node bamazonCustomer.js`
+  - Example input `node bamazonCustomer.js`
 
-  ![GIF bamazonCustomer.js](images/bamCus.gif)
+    ![GIF bamazonCustomer.js](images/bamCus.gif)
 
 
  ### __Bamazon Manager__
