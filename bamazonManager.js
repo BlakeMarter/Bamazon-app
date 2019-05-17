@@ -146,13 +146,13 @@ function addInventory() {
           function (err, res) {
             if (err) throw err;
             console.log("\n" + res.affectedRows + " product has been updated!" +
-              "\nYou have added " + ansAmt + " units to " + results[ansID].product_name + "\n");
+              "\nYou have added " + ansAmt + " units to " + results[ansID - 1].product_name + "\n");
 
             inquirer.prompt([
               {
                 name: "again",
                 type: "confirm",
-                message: "Would you like to make another purchase?"
+                message: "Would you like to make another addition?"
               }
             ]).then(answers => {
               if (answers.again === true) {
@@ -220,7 +220,7 @@ function newProduct() {
           {
             name: "again",
             type: "confirm",
-            message: "Would you like to make another purchase?"
+            message: "Would you like to make another addition?"
           }
         ]).then(answers => {
           if (answers.again === true) {
